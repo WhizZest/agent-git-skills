@@ -98,8 +98,8 @@ This skill is organized into modular reference documents. Load only what you nee
 **NEVER use `--body` parameter!** Command-line argument parsing fails with special characters, especially backticks (`) used in code blocks. This causes escaping issues that result in garbled text or parsing errors.
 
 ```bash
-# ✅ CORRECT
-gh pr create --title "Feature" --body-file description.md
+# ✅ CORRECT, workspace_dir is the root directory of the project
+gh pr create --title "Feature" --body-file workspace_dir/temp/description.md
 
 # ❌ WRONG - backticks and special chars cause escaping issues
 gh pr create --title "Feature" --body "Use `code()` function..."
@@ -110,9 +110,9 @@ gh pr create --title "Feature" --body "Use `code()` function..."
 **NEVER view PR comments directly in terminal!** Output may be truncated.
 
 ```bash
-# ✅ CORRECT workflow
-gh pr view 123 --comments > pr-123.md
-cat pr-123.md
+# ✅ CORRECT workflow, workspace_dir is the root directory of the project
+gh pr view 123 --comments > workspace_dir/temp/pr-123.md
+cat workspace_dir/temp/pr-123.md
 
 # ❌ WRONG (may lose data)
 gh pr view 123 --comments
@@ -124,11 +124,11 @@ In PowerShell, only `>` redirection is reliable:
 
 ```powershell
 # ✅ CORRECT
-gh pr view 123 --comments > pr.md
+gh pr view 123 --comments > workspace_dir/temp/pr-123.md
 
 # ❌ WRONG
-gh pr view 123 --comments | Out-File pr.md
-gh pr view 123 --comments > pr.md 2>&1
+gh pr view 123 --comments | Out-File workspace_dir/temp/pr-123.md
+gh pr view 123 --comments > workspace_dir/temp/pr-123.md 2>&1
 ```
 
 ## Common Workflows

@@ -174,9 +174,9 @@ gh repo view --web
 
 ```bash
 gh issue list
-gh issue create --title "Bug report" --body-file issue-body.md
+gh issue create --title "Bug report" --body-file workspace_dir/temp/issue-body.md
 gh pr list
-gh pr create --title "Fix bug" --body-file pr-body.md
+gh pr create --title "Fix bug" --body-file workspace_dir/temp/pr-body.md
 ```
 
 ### Using git-commit-push Skill
@@ -195,8 +195,8 @@ The `git-commit-push` skill should be invoked automatically when an AI agent nee
 **NEVER use `--body` parameter!** Command-line argument parsing fails with special characters, especially backticks (\`) used in code blocks.
 
 ```bash
-# ✅ CORRECT
-gh pr create --title "Feature" --body-file description.md
+# ✅ CORRECT, workspace_dir is the root directory of the project
+gh pr create --title "Feature" --body-file workspace_dir/temp/description.md
 
 # ❌ WRONG - backticks cause escaping issues
 gh pr create --title "Feature" --body "Use \`code()\` function..."
@@ -207,9 +207,9 @@ gh pr create --title "Feature" --body "Use \`code()\` function..."
 **NEVER view PR comments directly in terminal!** Terminal output may be truncated, causing loss of important information.
 
 ```bash
-# ✅ CORRECT workflow
-gh pr view 123 --comments > pr-123.md
-cat pr-123.md
+# ✅ CORRECT workflow, workspace_dir is the root directory of the project
+gh pr view 123 --comments > workspace_dir/temp/pr-123.md
+cat workspace_dir/temp/pr-123.md
 
 # ❌ WRONG (may lose data)
 gh pr view 123 --comments

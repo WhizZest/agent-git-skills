@@ -17,7 +17,7 @@ gh issue create \
   --body "Steps to reproduce..."
 
 # Create with body from file
-gh issue create --body-file issue.md
+gh issue create --body-file workspace_dir/temp/issue.md
 
 # Create with labels
 gh issue create --title "Fix bug" --labels bug,high-priority
