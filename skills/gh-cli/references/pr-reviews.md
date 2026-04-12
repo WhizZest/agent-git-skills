@@ -329,7 +329,9 @@ gh pr-review review 123 --submit \
 gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/todo.md
 
 # 2. Make changes, commit, push
-git add . && git commit -m "Address review feedback" && git push
+git status
+git add <explicit-file-paths>
+git commit -m "Address review feedback" && git push
 
 # 3. Decide response based on reviewer type:
 #    - AI Bot: wait 2 min, then re-check threads

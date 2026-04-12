@@ -18,7 +18,7 @@ Comprehensive GitHub CLI (gh) reference skill for AI agents.
 **Description:** Complete documentation and reference for GitHub CLI (`gh`), enabling AI agents to work seamlessly with GitHub from the command line. Covers repositories, issues, pull requests, Actions, projects, releases, gists, codespaces, organizations, and extensions.
 
 **Key Features:**
-- **Modular Design**: SKILL.md serves as a navigation hub (189 lines), with detailed content in 12 modular reference documents
+- **Modular Design**: SKILL.md serves as a navigation hub (189 lines), with detailed content in 13 modular reference documents
 - **Progressive Disclosure**: Load only the documentation you need, reducing context window usage by 92%
 - **Complete Command Reference**: All `gh` commands with examples and options
 - **Best Practices**: Critical warnings and workflows for common pitfalls
