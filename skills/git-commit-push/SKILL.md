@@ -19,7 +19,7 @@ description: "Git提交与推送规范指南。执行git commit/push前必须调
 ✅ 如果没有特别说明，用户的同意只针对一次操作，下次需重新询问
 ```
 
-### 2 原子性提交
+### 2. 原子性提交
 - 一个 commit 只做一件事（单一职责）
 - 不要将多个不相关的修改混在一起
 - 便于回滚、cherry-pick 和代码审查
@@ -128,6 +128,7 @@ git add src/file1.ts src/file2.ts
 
 **❌ 不推荐：使用 merge**
 ```bash
+# （在功能分支上执行）
 git merge master
 # 问题：会产生额外的 "Merge branch 'master' into feature/xxx" commit
 # PR 中会显示多余的合并提交，历史不够线性

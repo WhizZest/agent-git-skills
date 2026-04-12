@@ -74,7 +74,7 @@ git diff --cached
 git commit --file=<workspace_dir>/temp/git-commit-msg.txt
 
 # ✅ CORRECT: Update feature branch with rebase (clean history)
-git checkout master && git pull
+git checkout master && git pull origin master
 git checkout feature/your-branch && git rebase master
 
 # ✅ CORRECT: Push only after user approval
