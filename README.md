@@ -152,6 +152,7 @@ npx skills add https://github.com/WhizZest/agent-git-skills
 
 # Or manually copy the skill directories to your agent's skills directory
 # Or use symbolic links to keep them in sync with the repo
+# (Both methods require cloning this repository first)
 ```
 
 ### Prerequisites
