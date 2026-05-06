@@ -1,5 +1,5 @@
 ---
-name: "git-commit-push"
+name: git-commit-push
 description: "Git初始化新仓库、提交与推送规范指南。执行git init/commit/push前必须调用，确保遵循用户审核、原子提交、精准文件选择等原则。"
 ---
 
