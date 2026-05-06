@@ -225,7 +225,7 @@ def calculate_total(items: List[Item], tax_rate: float) -> Decimal:
 
 - 推荐的工具是否仍在维护、未被废弃？（不确定时主动搜索确认）
 - 工具分类是否准确（如 Linter vs Formatter、安全工具 vs 代码质量平台）？
-- 外部链接是否有效、引用的版本是否最新？
+- 外部链接是否有效，引用的版本是否最新？
 
 ### 第 8 步：提供反馈
 
@@ -312,7 +312,7 @@ def validate_email(email: str) -> bool:
 - 必要处有注释
 - 文档已更新
 - 破坏性变更已记录
-- 推荐工具和外部引用准确、未过时
+- 外部引用与工具推荐准确、未过时
 
 ## 常见问题
 
