@@ -4,10 +4,11 @@ AI agent skills for GitHub operations and Git workflow best practices.
 
 ## Overview
 
-This repository contains two complementary skills for AI agents working with Git and GitHub:
+This repository contains three complementary skills for AI agents working with Git and GitHub:
 
 1. **[gh-cli](#gh-cli-skill)** - Comprehensive GitHub CLI (`gh`) reference covering all major GitHub operations
 2. **[git-commit-push](#git-commit-push-skill)** - Git init, commit & push workflow guidelines ensuring proper repository setup, safe atomic commits with user approval
+3. **[code-review](#code-review-skill)** - Structured code review framework covering quality, security, performance, and testing standards
 
 ## Skills
 
@@ -81,6 +82,33 @@ git checkout feature/your-branch && git rebase master
 # Ask user before any push operation
 ```
 
+### code-review Skill
+
+结构化代码审查框架，覆盖代码质量、安全性、性能和测试标准。
+
+**Description:** 提供 8 步代码审查方法论，适用于 PR 审查和本地代码审查。涵盖架构评估、命名规范、SOLID 原则、安全审计、性能分析、测试审查、文档审查等维度，附带完整的审查检查清单和常见反模式识别。
+
+**Key Features:**
+- **8 步审查流程**：理解上下文 → 高层审视 → 详细审查 → 安全审查 → 性能审查 → 测试审查 → 文档审查 → 提供反馈
+- **完整检查清单**：功能正确性、代码质量、安全性、性能、测试、文档 6 大类
+- **反模式识别**：上帝类、魔法数字、深层嵌套等常见问题
+- **安全漏洞示例**：SQL 注入、XSS、硬编码密钥的修正方案
+- **CI/CD 集成**：支持平台 CI 状态检查，也支持本地运行测试
+- **工具推荐**：各语言 Linter、安全扫描工具、代码质量平台
+
+**审查流程概览：**
+
+| 步骤 | 内容 |
+|------|------|
+| 第 1 步 | 理解上下文（PR 描述、改动范围、CI/本地测试） |
+| 第 2 步 | 高层审视（架构设计、代码组织） |
+| 第 3 步 | 详细审查（命名、函数、类/SOLID、错误处理、代码质量） |
+| 第 4 步 | 安全审查（输入校验、认证授权、数据保护、依赖检查） |
+| 第 5 步 | 性能审查（算法、数据库、缓存、资源管理） |
+| 第 6 步 | 测试审查（覆盖率、测试质量、命名规范） |
+| 第 7 步 | 文档审查（注释、函数文档、README） |
+| 第 8 步 | 提供反馈（建设性、具体、分级：🔴严重/🟡重要/🟢锦上添花） |
+
 ## Repository Structure
 
 ```
@@ -101,8 +129,10 @@ skills/
 │       ├── search.md
 │       ├── advanced.md
 │       └── config.md
-└── git-commit-push/            # Git workflow guidelines skill
-    └── SKILL.md                # Commit/push best practices
+├── git-commit-push/            # Git workflow guidelines skill
+│   └── SKILL.md                # Commit/push best practices
+└── code-review/                # Code review framework skill
+    └── SKILL.md                # 8-step review methodology
 ```
 
 ## Installation
