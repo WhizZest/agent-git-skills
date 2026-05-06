@@ -405,12 +405,12 @@ API_KEY = os.environ.get("API_KEY")
 
 ## 推荐工具
 
-**Linter**：
+**Linter & Formatter**：
 
-- Python：pylint, flake8, black
-- Node.js：eslint, prettier
-- Go：golint, gofmt
-- Rust：clippy, rustfmt
+- Python：pylint, flake8 (Linter), black (Formatter)
+- Node.js：eslint (Linter), prettier (Formatter)
+- Go：golangci-lint (Linter), gofmt (Formatter)
+- Rust：clippy (Linter), rustfmt (Formatter)
 
 **安全工具**：
 
