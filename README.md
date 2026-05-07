@@ -142,10 +142,17 @@ skills/
 Install skills using your agent's skill manager:
 
 ```bash
-# Using skills.sh (install both skills)
+# Install specific skills
+npx skills add https://github.com/WhizZest/agent-git-skills --skill gh-cli
+npx skills add https://github.com/WhizZest/agent-git-skills --skill git-commit-push
+npx skills add https://github.com/WhizZest/agent-git-skills --skill code-review
+
+# Or install all skills at once
 npx skills add https://github.com/WhizZest/agent-git-skills
 
 # Or manually copy the skill directories to your agent's skills directory
+# Or use symbolic links to keep them in sync with the repo
+# (Both methods require cloning this repository first)
 ```
 
 ### Prerequisites
