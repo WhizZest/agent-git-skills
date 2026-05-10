@@ -163,8 +163,14 @@ cat workspace_dir/temp/pr-123-reviews.md
 mkdir workspace_dir/temp
 gh pr view 123 --comments > workspace_dir/temp/pr-123-comments.md
 gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
-python -c "import json; f=open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8'); data=json.load(f); f.close(); f=open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'); json.dump(data,f,indent=2,ensure_ascii=False); f.close()"
+```
 
+```python
+# Format the raw JSON with explicit UTF-8 encoding
+import json; data = json.load(open('workspace_dir/temp/pr-123-reviews-raw.json', encoding='utf-8')); json.dump(data, open('workspace_dir/temp/pr-123-reviews.md', 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+```
+
+```powershell
 # WRONG: Pipe corrupts Chinese/non-ASCII characters
 gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md  # ❌
 
