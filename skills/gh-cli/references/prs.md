@@ -50,6 +50,20 @@ gh pr create --repo owner/repo
 gh pr create --web
 ```
 
+### Optional: Countdown Wait After PR Creation
+
+When the user explicitly requests waiting before checking reviews (e.g., "等5分钟后查看review"), use a countdown timer. **Only use when user asks — do not auto-wait.**
+
+```powershell
+# Countdown: N seconds (replace 300 with user-specified seconds)
+$wait = 300; $wait..1 | ForEach-Object { Write-Host "`r⏱️ 等待中... 剩余 $_ 秒" -NoNewline; Start-Sleep 1 }; Write-Host "`n✅ 等待完成"
+```
+
+```bash
+# Countdown: N seconds (replace 300 with user-specified seconds)
+wait=300; for i in $(seq $wait -1 1); do printf "\r⏱️ 等待中... 剩余 %d 秒" "$i"; sleep 1; done; printf "\n✅ 等待完成\n"
+```
+
 ## List Pull Requests
 
 ```bash
@@ -123,7 +137,15 @@ mkdir -p workspace_dir/temp
 gh pr view 123 --comments > workspace_dir/temp/pr-123-comments.md
 
 # Step 2: Export inline review comments (code-level feedback, bugs, suggestions)
-gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+# ⚠️ NEVER pipe gh pr-review — use two-step approach to avoid encoding corruption
+gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "
+import json
+with open('workspace_dir/temp/pr-123-reviews-raw.json', encoding='utf-8') as f:
+    data = json.load(f)
+with open('workspace_dir/temp/pr-123-reviews.md', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+"
 
 # Step 3: Read both exported files for complete picture
 cat workspace_dir/temp/pr-123-comments.md
@@ -140,7 +162,11 @@ cat workspace_dir/temp/pr-123-reviews.md
 # CORRECT in PowerShell (ensure temp directory exists first)
 mkdir workspace_dir/temp
 gh pr view 123 --comments > workspace_dir/temp/pr-123-comments.md
-gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; f=open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8'); data=json.load(f); f.close(); f=open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'); json.dump(data,f,indent=2,ensure_ascii=False); f.close()"
+
+# WRONG: Pipe corrupts Chinese/non-ASCII characters
+gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md  # ❌
 
 # WRONG: Out-File may produce incomplete output
 gh pr view 123 --comments | Out-File -FilePath pr-123-view.md  # ❌
