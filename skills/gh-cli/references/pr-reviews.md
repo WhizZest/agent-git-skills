@@ -61,11 +61,15 @@ gh pr-review review 123 --add-comment --body "Use `code()` function here..."
 
 **TraeAI Terminal:** In the TraeAI agent terminal, `2>&1` merges stderr into stdout BEFORE `>` redirect, corrupting the output file. If you must capture stderr, use parentheses: `(gh pr-review review view ... > file) 2>&1`.
 
-**JSON Output:** `gh pr-review review view` outputs single-line JSON. Pipe through `python -m json.tool` for readable formatting before writing to file.
+**JSON Output:** `gh pr-review review view` outputs single-line JSON. **NEVER pipe to `python -m json.tool`** — piping may corrupt non-ASCII characters due to encoding issues in the pipeline. Always use the two-step approach: save raw JSON first, then format with explicit UTF-8 encoding.
 
 ```powershell
-# ✅ CORRECT (ensure temp directory exists first)
+# ✅ CORRECT: Two-step approach (ensure temp directory exists first)
 mkdir workspace_dir/temp
+gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
+
+# ❌ WRONG: Pipe corrupts Chinese/non-ASCII characters
 gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
 
 # ❌ WRONG (may lose data)
@@ -98,7 +102,6 @@ gh pr-review review view 123 -R owner/repo > pr-review.md 2>&1
 
 | Reviewer Type | Action | Details |
 |--------------|--------|---------|
-| **AI Bot** | Wait ~2 minutes, then check | AI bots typically auto-resolve within 2 minutes after a fix push |
 | **Human** | Reply to remind | Push fix → reply to thread asking reviewer to re-check |
 | **Any** | Reply with explanation | If choosing NOT to fix, reply with reasoning |
 
@@ -240,16 +243,6 @@ gh pr-review comments reply 123 -R owner/repo \
   --body "$(cat workspace_dir/temp/reply.md)"
 ```
 
-#### Scenario C: Reviewer is AI Bot → wait and check
-
-```powershell
-# Push fix, then wait 2 minutes for bot to auto-resolve (with progress)
-120..1 | ForEach-Object { Write-Host "`r⏱️ 等待 AI Bot 审查... 剩余 $_ 秒" -NoNewline; Start-Sleep 1 }; Write-Host "`n✅ 2分钟已过，检查结果"
-
-# Check if thread is resolved
-gh pr-review threads list 123 -R owner/repo --unresolved
-```
-
 ### Reply Inside a Pending Review
 
 When you have an active pending review (from `--start`), you can also reply within it:
@@ -311,23 +304,36 @@ Get a comprehensive, machine-readable overview of all reviews on a PR.
 
 **TraeAI Terminal:** In the TraeAI agent terminal, `2>&1` merges stderr into stdout BEFORE `>` redirect, corrupting the output file (e.g., only `--` in the file). If you must capture stderr, use parentheses: `(gh pr-review review view ... > file) 2>&1`.
 
-**JSON Output:** `gh pr-review review view` outputs single-line JSON. Pipe through `python -m json.tool` for readable formatting before writing to file.
+**JSON Output:** `gh pr-review review view` outputs single-line JSON. **NEVER pipe to `python -m json.tool`** — piping may corrupt non-ASCII characters due to encoding issues in the pipeline. Always use the two-step approach: save raw JSON first, then format with explicit UTF-8 encoding.
 
 ```bash
 # Step 0: Ensure temp directory exists
 mkdir -p workspace_dir/temp
 
-# Step 1: Export review data to file
-gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+# Step 1: Export raw JSON to file (NOT through pipe)
+gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
 
-# Step 2: Read the exported file
+# Step 2: Format with explicit UTF-8 encoding
+python -c "
+import json
+with open('workspace_dir/temp/pr-123-reviews-raw.json', encoding='utf-8') as f:
+    data = json.load(f)
+with open('workspace_dir/temp/pr-123-reviews.md', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+"
+
+# Step 3: Read the exported file
 cat workspace_dir/temp/pr-123-reviews.md
 ```
 
 ```powershell
 # Windows (PowerShell)
 mkdir workspace_dir/temp
-gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
+
+# WRONG: Pipe corrupts Chinese/non-ASCII characters
+gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md  # ❌
 
 # WRONG: Out-File may produce incomplete output
 gh pr-review review view 123 -R owner/repo | Out-File -FilePath pr-review.md  # ❌
@@ -340,19 +346,24 @@ gh pr-review review view 123 -R owner/repo > pr-review.md 2>&1  # ❌
 
 ```bash
 # Unresolved threads only, exclude outdated
-gh pr-review review view 123 -R owner/repo --unresolved --not_outdated | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 
 # Filter by specific reviewer
-gh pr-review review view 123 -R owner/repo --reviewer alice | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo --reviewer alice > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 
 # Filter by review state(s)
-gh pr-review review view 123 -R owner/repo --states APPROVED,CHANGES_REQUESTED | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo --states APPROVED,CHANGES_REQUESTED > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 
 # Include comment_node_id (useful for scripting replies)
-gh pr-review review view 123 -R owner/repo --include-comment-node-id | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo --include-comment-node-id > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 
 # Limit replies per thread (reduce noise)
-gh pr-review review view 123 -R owner/repo --tail 3 | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
+gh pr-review review view 123 -R owner/repo --tail 3 > workspace_dir/temp/pr-123-reviews-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/pr-123-reviews-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/pr-123-reviews.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 ```
 
 ### View Parameters Reference
@@ -423,7 +434,14 @@ gh pr-review review 123 --submit `
 ```bash
 # Linux / macOS (bash)
 # 1. Check what needs fixing
-gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/todo.md
+gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/todo-raw.json
+python -c "
+import json
+with open('workspace_dir/temp/todo-raw.json', encoding='utf-8') as f:
+    data = json.load(f)
+with open('workspace_dir/temp/todo.md', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+"
 
 # 2. Make changes, commit, push
 git status
@@ -431,7 +449,6 @@ git add <explicit-file-paths>
 git commit -m "Address review feedback" && git push
 
 # 3. Decide response based on reviewer type:
-#    - AI Bot: wait 2 min, then re-check threads
 #    - Human: reply to thread with notification
 #    - Or explain if not fixing
 ```
@@ -439,7 +456,8 @@ git commit -m "Address review feedback" && git push
 ```powershell
 # Windows (PowerShell)
 # 1. Check what needs fixing
-gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/todo.md
+gh pr-review review view 123 -R owner/repo --unresolved --not_outdated > workspace_dir/temp/todo-raw.json
+python -c "import json; data=json.load(open('workspace_dir/temp/todo-raw.json',encoding='utf-8')); json.dump(data,open('workspace_dir/temp/todo.md','w',encoding='utf-8'),indent=2,ensure_ascii=False)"
 
 # 2. Make changes, commit, push
 git status
@@ -447,7 +465,6 @@ git add <explicit-file-paths>
 git commit -m "Address review feedback"; git push
 
 # 3. Decide response based on reviewer type:
-#    - AI Bot: wait 2 min, then re-check threads
 #    - Human: reply to thread with notification
 #    - Or explain if not fixing
 ```
