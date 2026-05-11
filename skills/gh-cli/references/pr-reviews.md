@@ -164,7 +164,7 @@ gh pr-review review 123 --submit `
 | `--side` | Diff side: `RIGHT` (new code) or `LEFT` (old code) |
 | `--start-side` | Start side for multi-line range comment |
 | `--event` | `APPROVE`, `REQUEST_CHANGES`, or `COMMENT` |
-| `--body` | Comment body text (use `--body-file` instead when possible to avoid escaping issues) |
+| `--body`, `--body-file` | Comment body text. Prefer `--body-file` to avoid shell escaping issues. |
 | `--commit` | Commit SHA (defaults to current HEAD) |
 | `--review-id` | GraphQL review node ID from `--start` output |
 
@@ -324,23 +324,23 @@ gh pr-review review view 123 -R owner/repo | Out-File -FilePath pr-review.md
 
 ### Filter Options
 
-All filters can be used with `--pretty` for one-step output:
+All filters can be used with `--pretty` for one-step output (remember to redirect to a file):
 
 ```bash
 # Unresolved threads only, exclude outdated
-gh pr-review review view 123 -R owner/repo --unresolved --not_outdated --pretty
+gh pr-review review view 123 -R owner/repo --unresolved --not_outdated --pretty > workspace_dir/temp/pr-123-reviews.md
 
 # Filter by specific reviewer
-gh pr-review review view 123 -R owner/repo --reviewer alice --pretty
+gh pr-review review view 123 -R owner/repo --reviewer alice --pretty > workspace_dir/temp/pr-123-reviews.md
 
 # Filter by review state(s)
-gh pr-review review view 123 -R owner/repo --states APPROVED,CHANGES_REQUESTED --pretty
+gh pr-review review view 123 -R owner/repo --states APPROVED,CHANGES_REQUESTED --pretty > workspace_dir/temp/pr-123-reviews.md
 
 # Include comment_node_id (useful for scripting replies)
-gh pr-review review view 123 -R owner/repo --include-comment-node-id --pretty
+gh pr-review review view 123 -R owner/repo --include-comment-node-id --pretty > workspace_dir/temp/pr-123-reviews.md
 
 # Limit replies per thread (reduce noise)
-gh pr-review review view 123 -R owner/repo --tail 3 --pretty
+gh pr-review review view 123 -R owner/repo --tail 3 --pretty > workspace_dir/temp/pr-123-reviews.md
 ```
 
 ### View Parameters Reference
