@@ -136,16 +136,8 @@ mkdir -p workspace_dir/temp
 # Step 1: Export PR conversation comments (PR-level only)
 gh pr view 123 --comments > workspace_dir/temp/pr-123-comments.md
 
-# Step 2: Export inline review comments (code-level feedback, bugs, suggestions)
-# ⚠️ NEVER pipe gh pr-review — use two-step approach to avoid encoding corruption
-gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
-python -c "
-import json
-with open('workspace_dir/temp/pr-123-reviews-raw.json', encoding='utf-8') as f:
-    data = json.load(f)
-with open('workspace_dir/temp/pr-123-reviews.md', 'w', encoding='utf-8') as f:
-    json.dump(data, f, indent=2, ensure_ascii=False)
-"
+# Step 2: Export inline review comments with pretty-printed JSON
+gh pr-review review view 123 -R owner/repo --pretty > workspace_dir/temp/pr-123-reviews.md
 
 # Step 3: Read both exported files for complete picture
 cat workspace_dir/temp/pr-123-comments.md
@@ -159,20 +151,13 @@ cat workspace_dir/temp/pr-123-reviews.md
 **PowerShell redirection examples:**
 
 ```powershell
-# CORRECT in PowerShell (ensure temp directory exists first)
+# ✅ Correct
 mkdir workspace_dir/temp
 gh pr view 123 --comments > workspace_dir/temp/pr-123-comments.md
-gh pr-review review view 123 -R owner/repo > workspace_dir/temp/pr-123-reviews-raw.json
-```
+gh pr-review review view 123 -R owner/repo --pretty > workspace_dir/temp/pr-123-reviews.md
 
-```python
-# Format the raw JSON with explicit UTF-8 encoding
-import json; data = json.load(open('workspace_dir/temp/pr-123-reviews-raw.json', encoding='utf-8')); json.dump(data, open('workspace_dir/temp/pr-123-reviews.md', 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
-```
-
-```powershell
-# WRONG: Pipe corrupts Chinese/non-ASCII characters
-gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md  # ❌
+# ❌ Wrong: Pipe corrupts Chinese/non-ASCII characters
+gh pr-review review view 123 -R owner/repo | python -m json.tool > workspace_dir/temp/pr-123-reviews.md
 
 # WRONG: Out-File may produce incomplete output
 gh pr view 123 --comments | Out-File -FilePath pr-123-view.md  # ❌
