@@ -24,23 +24,19 @@ description: "Git初始化新仓库、提交与推送规范指南。执行git in
 
 ### 0. 先同步远端再操作（有远端仓库时）
 
-```
-❌ 禁止在本地落后于远端的情况下创建新分支或提交
-✅ 创建新分支前先 git fetch 检查本地是否落后
-✅ 发现落后时先 git pull 再操作
-```
-
+> ❌ 禁止在本地落后于远端的情况下创建新分支或提交
+> ✅ 创建新分支前先 git fetch 检查本地是否落后
+> ✅ 发现落后时先 git pull 再操作
+>
 > 无远端仓库（纯本地仓库）时跳过此步骤。典型错误场景：本地 main 已落后远端多个 commit 就直接创建新分支，导致分支基于过时代码。
 
 ### 1. 用户审核原则（最重要）
 
-```
-❌ 禁止擅自执行 git commit 或 git push
-✅ 提交前必须执行基本测试通过
-✅ 每次提交前必须征询用户意见
-✅ 让用户审核 commit message 内容
-✅ 如果没有特别说明，用户的同意只针对一次操作，下次需重新询问
-```
+> ❌ 禁止擅自执行 git commit 或 git push
+> ✅ 提交前必须执行基本测试通过
+> ✅ 每次提交前必须征询用户意见
+> ✅ 让用户审核 commit message 内容
+> ✅ 如果没有特别说明，用户的同意只针对一次操作，下次需重新询问
 
 ### 2. 原子性提交
 - 一个 commit 只做一件事（单一职责）
@@ -58,14 +54,12 @@ description: "Git初始化新仓库、提交与推送规范指南。执行git in
 
 ### 5. 文件选择原则
 
-```
-❌ 禁止使用 git add -A 或 git add .
-✅ 明确指定要提交的文件
-✅ 提交前必须执行 git status 检查
-✅ 临时文件应创建在`<workspace_dir>/temp/`目录下
-✅ 提交前如果发现有临时文件，必须先将它们移动到 `<workspace_dir>/temp/`目录下
-✅ 确认只有核心业务逻辑文件
-```
+> ❌ 禁止使用 git add -A 或 git add .
+> ✅ 明确指定要提交的文件
+> ✅ 提交前必须执行 git status 检查
+> ✅ 临时文件应创建在 `<workspace_dir>/temp/` 目录下
+> ✅ 提交前如果发现有临时文件，必须先将它们移动到 `<workspace_dir>/temp/` 目录下
+> ✅ 确认只有核心业务逻辑文件
 
 注意：workspace_dir 是工作区根目录，通常不是特定的仓库根目录，而是包含多个仓库，但如果仓库本身是工作区根目录，则应在.gitignore中忽略temp目录。
 
@@ -136,14 +130,9 @@ git add src/file1.ts src/file2.ts
 ```
 
 **2. 临时文件混入提交**
-```bash
-# ❌ 临时文件创建在工作目录
-.git-commit-msg.txt
-.pr-description.md
 
-# ✅ 使用<workspace_dir>/temp/`临时目录
-<workspace_dir>/temp/git-commit-msg.txt
-```
+> ❌ 临时文件创建在工作目录：`.git-commit-msg.txt`、`.pr-description.md`
+> ✅ 使用 `<workspace_dir>/temp/` 临时目录：`<workspace_dir>/temp/git-commit-msg.txt`
 
 **3. 替换已创建PR的commit**
 如果commit已被push，且该分支已创建PR，禁止直接amend。
