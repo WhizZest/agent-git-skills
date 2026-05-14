@@ -153,7 +153,7 @@ description: 结构化代码审查框架，覆盖代码质量、安全性、性�
 - `null` / `undefined` 输入是否会导致崩溃？
 - 空白字符串、纯空格是否被正确处理？
 - 非预期类型（如传入 `number` 而非 `string`）是否有类型转换或明确报错？
-- 推荐做法：函数入口处做类型转换和清理，如 `id = str(book_id).strip()`（Python）或 `const id = String(bookId).trim()`（JS）
+- 推荐做法：函数入口处先处理空值再进行转换和清理，如 id = str(book_id or "").strip()（Python）或 const id = String(bookId || "").trim()（JS）
 
 **认证与授权**：
 
